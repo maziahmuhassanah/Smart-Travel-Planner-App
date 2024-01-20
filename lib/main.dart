@@ -1,33 +1,45 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:travex/homepage.dart';
+import 'package:provider/provider.dart';
+import 'package:smart_travel_planner/home_page.dart';
+import 'package:smart_travel_planner/signup.dart';
+import 'package:smart_travel_planner/login.dart';
+import 'place_registration.dart';
+import 'q&a.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomePage(),
-      theme: ThemeData(
-        // Define the default brightness and colors.
-        brightness: Brightness.light,
-        primaryColor: Colors.red,
-        accentColor: Colors.cyan[600],
-
-        // Define the default font family.
-        fontFamily: 'WorkSans',
-
-        // Define the default TextTheme. Use this to specify the default
-        // text styling for headlines, titles, bodies of text, and more.
-        textTheme: TextTheme(
-          headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-          title: TextStyle(fontSize: 36.0, fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),
-          body1: TextStyle(fontSize: 14.0, fontFamily: 'WorkSans'),
-          subtitle: TextStyle(fontSize: 16.0, fontFamily: 'WorkSans'),
-        ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AppUser()),
+      ],
+      child: MaterialApp(
+        routes: {
+          '/homepage': (context) => HomePage(username: ''),
+          '/signup': (context) => SignupScreen(),
+          '/qanda': (context) => UserQAScreen(),
+        },
+        title: 'Smart Travel Planner',
+        home: 
+        // HomePage(username: '',),
+        LoginScreen(),
       ),
     );
   }
 }
 
+class AppUser with ChangeNotifier {
+  String userId = '';
+
+  void setUserId(String id) {
+    userId = id;
+    notifyListeners();
+  }
+}
